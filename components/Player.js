@@ -1,6 +1,6 @@
 import {  HeartIcon, VolumeUpIcon as VolumenDownIcon } from "@heroicons/react/outline"
 import { FastForwardIcon, PauseIcon, PlayIcon, RewindIcon, 
-         SwitchHorizontalIcon, VolumeUpIcon, ReplyIcon  } from "@heroicons/react/solid"
+         SwitchHorizontalIcon, VolumeUpIcon, ReplyIcon, HeartIcon as LikedSong  } from "@heroicons/react/solid"
 import { debounce } from "lodash"
 import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useState } from "react"
@@ -15,6 +15,7 @@ const Player = () => {
     const [currentTrackId, setCurrentIdTrack] = useRecoilState(currentTrackIdState)
     const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState)
     const [volumen, setVolumen] = useState(50)
+    const [likedSong, setLikedSong] = useState(false)
 
     const songInfo = useSongInfo()
     const fechCurrentSong = () => {
@@ -42,6 +43,10 @@ const Player = () => {
         })
     }
 
+    const handleLikedSong = () =>{
+        setLikedSong(!likedSong)
+    }
+
     useEffect(()=>{
         if (spotifyApi.getAccessToken() && !currentTrackId){
             fechCurrentSong()
@@ -65,12 +70,12 @@ const Player = () => {
         <div className="h-24 bg-gradient-to-b from-black to-gray-900 text-white 
                         grid grid-cols-3 text-xs md:text-base px-2 md:px-8">
             <div className="flex items-center space-x-4">
-                <img className="hidden md:inline h-10 w-10" 
-                    src={songInfo?.album.images?.[0]?.url} alt=""/>
+                <img className="hidden md:inline h-10 w-10" src={songInfo?.album.images?.[0]?.url} alt=""/>
                 <div>
                     <h3>{songInfo?.name}</h3>
                     <p>{songInfo?.artists?.[0]?.name}</p>
                 </div>
+                { likedSong ? <LikedSong className="button text-red-300" onClick={handleLikedSong}/> : <HeartIcon className="button" onClick={handleLikedSong} />}
             </div>
             <div className="flex items-center justify-evenly">
                 <SwitchHorizontalIcon className="button"/>
